@@ -6,15 +6,22 @@ import Login from './pages/Login'
 import ProtectedRoutes from './components/ProtectedRoutes'
 import MyRecipes from './pages/MyRecipes'
 import Favorites from './pages/Favorites'
+import CategoryPage from './pages/CategoryPage'
+import RecipeDetail from './pages/RecipeDetail'
+import AddRecipe from './components/AddRecipe'
 
 const App = () => {
   return (
     <Routes>
       <Route element={<MainLayout />}>
+        // public pages
         <Route path="/" element={<Home />} />
         <Route path="login" element={<Login />} />
-
+        <Route path="/category/:id" element={<CategoryPage />} />
+        <Route path="/recipe/:id" element={<RecipeDetail />} />
+        // protected pages
         <Route element={<ProtectedRoutes />}>
+          <Route path="/add-recipe" element={<AddRecipe />} />
           <Route path="/my-recipes" element={<MyRecipes />} />
           <Route path="/favorites" element={<Favorites />} />
         </Route>
