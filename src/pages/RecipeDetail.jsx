@@ -141,7 +141,9 @@ const RecipeDetail = () => {
 
         {user?.uid === recipe.authorId && (
           <Link to={`/edit/${id}`} style={{ marginLeft: 'auto' }}>
-            <button style={{ padding: '0.5rem 1rem' }}>Edit Recipe</button>
+            <button className="flex-1 bg-gray-200 text-gray-800 py-2 rounded hover:bg-gray-300">
+              Edit Recipe
+            </button>
           </Link>
         )}
 

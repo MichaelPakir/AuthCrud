@@ -1,7 +1,5 @@
-// src/lib/firebase.js
 import { initializeApp } from 'firebase/app'
-import { getFirestore } from 'firebase/firestore'
-// import { getAuth } from 'firebase/auth'  // Add later when needed
+import { initializeFirestore } from 'firebase/firestore'
 import { getAuth } from 'firebase/auth'
 
 const firebaseConfig = {
@@ -14,11 +12,12 @@ const firebaseConfig = {
   measurementId: 'G-ZCBZWGKSV0',
 }
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig)
 
-// Initialize services
-export const db = getFirestore(app)
+export const db = initializeFirestore(app, {
+  experimentalForceLongPolling: true,
+})
+
 export const auth = getAuth(app)
 
 export default app
