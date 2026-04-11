@@ -9,7 +9,7 @@ import Favorites from './pages/Favorites'
 import CategoryPage from './pages/CategoryPage'
 import RecipeDetail from './pages/RecipeDetail'
 import AddRecipe from './components/AddRecipe'
-import EditRecipe from './../../Recipe/src/components/EditRecipe'
+import EditRecipe from './pages/EditRecipe'
 
 const App = () => {
   return (

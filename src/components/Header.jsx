@@ -27,7 +27,7 @@ const Header = () => {
       }}
     >
       <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-        <h1 style={{ margin: 0 }}>Rizz</h1>
+        <h1 style={{ margin: 0 }}>Great Hall</h1>
       </Link>
 
       <nav>
