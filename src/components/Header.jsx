@@ -38,8 +38,14 @@ const Header = () => {
             <Link to={'/my-recipes'}>My Recipes</Link>
             <img
               src={user.photoURL}
-              alt={user.displayName}
-              style={{ width: '40px', height: '40px', borderRadius: '50%' }}
+              alt={user.displayName || 'user'}
+              style={{
+                width: '40px',
+                height: '40px',
+                borderRadius: '50%',
+                objectFit: 'cover',
+                border: '2px solid #ccc',
+              }}
             />
 
             <button onClick={logout}>Logout</button>

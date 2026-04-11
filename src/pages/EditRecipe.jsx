@@ -1,48 +1,90 @@
-import React, { useEffect, useState } from 'react'
-import { useAuth } from '../contexts/AuthContext'
-import { useNavigate } from 'react-router-dom'
-import { uploadImage } from '../services/imageService'
-import { fetchCategories } from './../services/categoryService'
-import { collection, addDoc } from 'firebase/firestore'
+import React, { useState, useEffect } from 'react'
+import { useParams, useNavigate, Link } from 'react-router-dom'
+import { doc, getDoc, updateDoc } from 'firebase/firestore'
 import { db } from '../lib/firebase'
+import { useAuth } from '../contexts/AuthContext'
+import { uploadImage } from '../services/imageService'
+import { fetchCategories } from '../services/categoryService'
 
-const AddRecipe = () => {
+const EditRecipe = () => {
+  const { id } = useParams()
+  const navigate = useNavigate()
+  const { user } = useAuth()
+
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [category, setCategory] = useState('')
-  const [ingredients, setIngredients] = useState([''])
-  const [instructions, setInstructions] = useState([''])
-  const [imageUrl, setImageUrl] = useState('')
   const [prepTime, setPrepTime] = useState('')
   const [cookTime, setCookTime] = useState('')
   const [servings, setServings] = useState('')
   const [difficulty, setDifficulty] = useState('easy')
+  const [ingredients, setIngredients] = useState([''])
+  const [instructions, setInstructions] = useState([''])
+  const [imageUrl, setImageUrl] = useState('')
+  const [uploading, setUploading] = useState(false)
 
   const [categories, setCategories] = useState([])
-  const [uploading, setUploading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
-
-  const { user } = useAuth()
-  const navigate = useNavigate()
+  const [error, setError] = useState(null)
 
   useEffect(() => {
-    const loadCategories = async () => {
-      const data = await fetchCategories()
-      setCategories(data)
+    const loadData = async () => {
+      try {
+        const cats = await fetchCategories()
+        setCategories(cats)
+
+        const recipeRef = doc(db, 'recipes', id)
+        const snapshot = await getDoc(recipeRef)
+
+        if (!snapshot.exists()) {
+          setError('Recipe not found')
+          setLoading(false)
+          return
+        }
+
+        const recipeData = snapshot.data()
+
+        if (recipeData.authorId !== user.uid) {
+          setError('Unauthorized')
+          setLoading(false)
+          return
+        }
+
+        setTitle(recipeData.title || '')
+        setDescription(recipeData.description || '')
+        setCategory(recipeData.categoryId || '')
+        setPrepTime(recipeData.prepTime || '')
+        setCookTime(recipeData.cookTime || '')
+        setServings(recipeData.servings || '')
+        setDifficulty(recipeData.difficulty || 'easy')
+        setIngredients(
+          recipeData.ingredients?.length ? recipeData.ingredients : ['']
+        )
+        setInstructions(
+          recipeData.instructions?.length ? recipeData.instructions : ['']
+        )
+        setImageUrl(recipeData.imageUrl || '')
+      } catch (error) {
+        console.error('Error loading recipe:', error)
+        setError('Failed to load recipe')
+      } finally {
+        setLoading(false)
+      }
     }
-    loadCategories()
-  }, [])
+    loadData()
+  }, [id, user, navigate])
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0]
     if (!file) return
-
     setUploading(true)
+
     try {
       const url = await uploadImage(file)
       setImageUrl(url)
     } catch (error) {
-      alert('Image upload failed!')
+      alert('Image upload failed')
     } finally {
       setUploading(false)
     }
@@ -85,8 +127,9 @@ const AddRecipe = () => {
     }
 
     setSaving(true)
+
     try {
-      await addDoc(collection(db, 'recipes'), {
+      await updateDoc(doc(db, 'recipes', id), {
         title,
         description,
         categoryId: category,
@@ -101,35 +144,35 @@ const AddRecipe = () => {
         imageUrl,
         authorId: user.uid,
         authorName: user.displayName || 'Anonymous',
-        createdAt: new Date(),
         updatedAt: new Date(),
       })
 
-      navigate('/my-recipes')
+      navigate(`/recipe/${id}`)
     } catch (error) {
-      alert('Failed to save recipe!')
-      console.error(error)
+      alert('Failed to update recipe!')
     } finally {
       setSaving(false)
     }
   }
 
-  return (
-    <div style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto' }}>
-      <h1>Let's add recipes</h1>
+  if (loading) return <div>Loading recipe...</div>
+  if (error)
+    return (
+      <div>
+        {error} <Link to="/">Back</Link>
+      </div>
+    )
 
-      <form
-        onSubmit={handleSubmit}
-        style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}
-      >
+  return (
+    <section>
+      <h1>Edit Recipe</h1>
+      <form onSubmit={handleSubmit}>
         <div>
-          <label>Recipe Title *</label>
+          <label>Recipe Title</label>
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Enter recipe title"
-            style={{ width: '100%', padding: '0.5rem' }}
             required
           />
         </div>
@@ -137,79 +180,25 @@ const AddRecipe = () => {
         <div>
           <label>Description</label>
           <textarea
+            rows={3}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="Brief description of your recipe"
-            rows="3"
-            style={{ width: '100%', padding: '0.5rem' }}
-          />
+          ></textarea>
         </div>
 
         <div>
-          <label>Category *</label>
+          <label>Category*</label>
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            style={{ width: '100%', padding: '0.5rem' }}
             required
           >
-            <option value="">Select a category</option>
+            <option value={''}>Select a category</option>
             {categories.map((cat) => (
               <option key={cat.id} value={cat.id}>
                 {cat.name}
               </option>
             ))}
-          </select>
-        </div>
-
-        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-          <div style={{ flex: 1, minWidth: '120px' }}>
-            <label>Prep Time (mins)</label>
-            <input
-              type="number"
-              value={prepTime}
-              onChange={(e) => setPrepTime(e.target.value)}
-              placeholder="10"
-              min="0"
-              style={{ width: '100%', padding: '0.5rem' }}
-            />
-          </div>
-
-          <div style={{ flex: 1, minWidth: '120px' }}>
-            <label>Cook Time (mins)</label>
-            <input
-              type="number"
-              value={cookTime}
-              onChange={(e) => setCookTime(e.target.value)}
-              placeholder="15"
-              min="0"
-              style={{ width: '100%', padding: '0.5rem' }}
-            />
-          </div>
-
-          <div style={{ flex: 1, minWidth: '120px' }}>
-            <label>Servings</label>
-            <input
-              type="number"
-              value={servings}
-              onChange={(e) => setServings(e.target.value)}
-              placeholder="4"
-              min="1"
-              style={{ width: '100%', padding: '0.5rem' }}
-            />
-          </div>
-        </div>
-
-        <div>
-          <label>Difficulty</label>
-          <select
-            value={difficulty}
-            onChange={(e) => setDifficulty(e.target.value)}
-            style={{ width: '100%', padding: '0.5rem' }}
-          >
-            <option value="easy">Easy</option>
-            <option value="medium">Medium</option>
-            <option value="hard">Hard</option>
           </select>
         </div>
 
@@ -232,18 +221,49 @@ const AddRecipe = () => {
         </div>
 
         <div>
-          <label>Ingredients</label>
+          <label>Prep Time "(mins)"</label>
+          <input
+            type="number"
+            value={prepTime}
+            onChange={(e) => setPrepTime(e.target.value)}
+          />
+
+          <label>Cook Time "(mins)"</label>
+          <input
+            type="number"
+            value={cookTime}
+            onChange={(e) => setCookTime(e.target.value)}
+          />
+
+          <label>Servings</label>
+          <input
+            type="number"
+            value={servings}
+            onChange={(e) => setServings(e.target.value)}
+          />
+        </div>
+
+        <div>
+          <label>Difficulty</label>
+          <select
+            value={difficulty}
+            onChange={(e) => setDifficulty(e.target.value)}
+          >
+            <option value="easy">easy</option>
+            <option value="medium">medium</option>
+            <option value="hard">hard</option>
+          </select>
+        </div>
+
+        <div>
+          <h3>Ingredients</h3>
+
           {ingredients.map((ing, index) => (
-            <div
-              key={index}
-              style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}
-            >
+            <div key={index}>
               <input
                 type="text"
                 value={ing}
                 onChange={(e) => updateIngredient(index, e.target.value)}
-                placeholder={`Ingredient ${index + 1}`}
-                style={{ flex: 1, padding: '0.5rem' }}
               />
               {ingredients.length > 1 && (
                 <button type="button" onClick={() => removeIngredient(index)}>
@@ -258,19 +278,14 @@ const AddRecipe = () => {
         </div>
 
         <div>
-          <label>Instructions</label>
+          <h3>Instructions</h3>
+
           {instructions.map((inst, index) => (
-            <div
-              key={index}
-              style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}
-            >
+            <div key={index}>
               <textarea
                 value={inst}
                 onChange={(e) => updateInstruction(index, e.target.value)}
-                placeholder={`Step ${index + 1}`}
-                rows="2"
-                style={{ flex: 1, padding: '0.5rem' }}
-              />
+              ></textarea>
               {instructions.length > 1 && (
                 <button type="button" onClick={() => removeInstruction(index)}>
                   Remove
@@ -283,16 +298,12 @@ const AddRecipe = () => {
           </button>
         </div>
 
-        <button
-          type="submit"
-          disabled={saving}
-          style={{ padding: '1rem', fontSize: '1.1rem', cursor: 'pointer' }}
-        >
-          {saving ? 'Saving...' : 'Save Recipe'}
+        <button type="submit" disabled={saving}>
+          {saving ? 'Saving...' : 'Save Changes'}
         </button>
       </form>
-    </div>
+    </section>
   )
 }
 
-export default AddRecipe
+export default EditRecipe

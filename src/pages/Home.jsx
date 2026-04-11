@@ -45,7 +45,6 @@ const Home = () => {
 
   return (
     <section style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
-      {/* Categories Section */}
       <div style={{ marginBottom: '3rem', textAlign: 'center' }}>
         <h1
           style={{
@@ -107,7 +106,6 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Recipes Section */}
       <div>
         <h2
           style={{
@@ -174,7 +172,6 @@ const Home = () => {
                       '0 4px 6px rgba(0,0,0,0.1)'
                   }}
                 >
-                  {/* Recipe Image */}
                   <div
                     style={{
                       height: '180px',

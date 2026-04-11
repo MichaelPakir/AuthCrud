@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react'
 import { doc, getDoc } from 'firebase/firestore'
 import { db } from '../lib/firebase'
 import { useParams, Link } from 'react-router-dom'
+import { useAuth } from '../contexts/AuthContext'
 
 const RecipeDetail = () => {
   const [recipe, setRecipe] = useState(null)
   const [loading, setLoading] = useState(true)
+  const { user } = useAuth()
 
   const { id } = useParams()
 
@@ -60,7 +62,6 @@ const RecipeDetail = () => {
     )
   }
 
-  // Difficulty color coding
   const difficultyColors = {
     easy: '#51cf66',
     medium: '#ffd43b',
@@ -76,7 +77,6 @@ const RecipeDetail = () => {
         animation: 'fadeIn 0.5s ease',
       }}
     >
-      {/* Header */}
       <div style={{ marginBottom: '2rem' }}>
         <div
           style={{
@@ -139,6 +139,12 @@ const RecipeDetail = () => {
           {recipe.title}
         </h1>
 
+        {user?.uid === recipe.authorId && (
+          <Link to={`/edit/${id}`} style={{ marginLeft: 'auto' }}>
+            <button style={{ padding: '0.5rem 1rem' }}>Edit Recipe</button>
+          </Link>
+        )}
+
         <p
           style={{
             fontSize: '1.125rem',
@@ -168,7 +174,6 @@ const RecipeDetail = () => {
         </div>
       </div>
 
-      {/* Hero Image */}
       {recipe.imageUrl && (
         <div
           style={{
@@ -195,7 +200,6 @@ const RecipeDetail = () => {
         </div>
       )}
 
-      {/* Stats Grid */}
       <div
         style={{
           display: 'grid',
@@ -241,7 +245,6 @@ const RecipeDetail = () => {
         </div>
       </div>
 
-      {/* Ingredients */}
       <section style={{ marginBottom: '2rem' }}>
         <h2
           style={{
@@ -308,7 +311,6 @@ const RecipeDetail = () => {
         </ul>
       </section>
 
-      {/* Instructions */}
       <section>
         <h2
           style={{
@@ -370,7 +372,6 @@ const RecipeDetail = () => {
         </div>
       </section>
 
-      {/* Back Button */}
       <div style={{ marginTop: '3rem', textAlign: 'center' }}>
         <Link
           to="/"
