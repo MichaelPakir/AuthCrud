@@ -10,16 +10,14 @@ const Home = () => {
   const [loadingRecipes, setLoadingRecipes] = useState(true)
 
   useEffect(() => {
-    // Fetch categories (your existing function)
     fetchCategories().then(setCategories)
 
-    // Fetch recent recipes
     const fetchRecipes = async () => {
       try {
         const q = query(
           collection(db, 'recipes'),
           orderBy('createdAt', 'desc'),
-          limit(12) // show last 12 recipes
+          limit(12)
         )
         const snapshot = await getDocs(q)
         const recipesData = snapshot.docs.map((doc) => ({
@@ -70,7 +68,7 @@ const Home = () => {
           {categories.map((cat) => (
             <Link
               key={cat.id}
-              to={`/category/${cat.id}`}
+              to={`/category/${encodeURIComponent(cat.id)}`}
               style={{ textDecoration: 'none' }}
             >
               <div

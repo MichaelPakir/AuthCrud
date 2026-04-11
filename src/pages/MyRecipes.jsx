@@ -74,8 +74,6 @@ const MyRecipes = () => {
   const handleRetry = () => {
     setError(null)
     setLoading(true)
-    // Trigger useEffect by toggling a state or just reload page
-    // For now, simple page reload:
     window.location.reload()
   }
 

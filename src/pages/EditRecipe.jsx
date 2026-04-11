@@ -29,6 +29,12 @@ const EditRecipe = () => {
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState(null)
 
+  const difficultyColors = {
+    easy: '#51cf66',
+    medium: '#ffd43b',
+    hard: '#ff6b6b',
+  }
+
   useEffect(() => {
     if (!user) {
       setError('Please log in')
@@ -117,6 +123,15 @@ const EditRecipe = () => {
     }))
   }
 
+  const getCategoryColor = (catName) => {
+    const name = catName?.toLowerCase()
+    if (name === 'breakfast') return '#FFE4B5'
+    if (name === 'lunch') return '#90EE90'
+    if (name === 'dinner') return '#FFB6C1'
+    if (name === 'dessert') return '#DDA0DD'
+    return '#E9ECEF'
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
 
@@ -155,37 +170,151 @@ const EditRecipe = () => {
     }
   }
 
-  if (loading) return <div className="p-6 text-center">Loading recipe...</div>
-  if (error)
+  if (loading) {
     return (
-      <div className="p-6 text-center">
-        {error}{' '}
-        <Link to="/" className="text-indigo-600 underline ml-2">
-          Back
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '50vh',
+          fontSize: '1.2rem',
+          color: '#666',
+        }}
+      >
+        <span style={{ marginRight: '0.5rem' }}>🍳</span> Loading recipe...
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div style={{ textAlign: 'center', padding: '4rem 2rem' }}>
+        <h2 style={{ fontSize: '2rem', marginBottom: '1rem' }}>😕</h2>
+        <p>{error}</p>
+        <Link to="/" style={{ color: '#ff6b6b', textDecoration: 'none' }}>
+          ← Back to home
         </Link>
       </div>
     )
+  }
 
   const {
     title,
     description,
     category,
-    prepTime,
-    cookTime,
-    servings,
     difficulty,
     ingredients,
     instructions,
     imageUrl,
   } = formData
 
-  return (
-    <section className="max-w-3xl mx-auto p-6 bg-white rounded-2xl shadow-md">
-      <h1 className="text-2xl font-semibold mb-6">Edit Recipe</h1>
+  const selectedCategoryName = categories.find((c) => c.id === category)?.name
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <label className="block text-sm font-medium mb-1">
+  return (
+    <article
+      style={{
+        maxWidth: '800px',
+        margin: '0 auto',
+        padding: '2rem',
+        animation: 'fadeIn 0.5s ease',
+      }}
+    >
+      <div style={{ marginBottom: '2rem' }}>
+        <div
+          style={{
+            display: 'flex',
+            gap: '0.5rem',
+            marginBottom: '1rem',
+            flexWrap: 'wrap',
+          }}
+        >
+          <span
+            style={{
+              backgroundColor: '#ff6b6b',
+              color: 'white',
+              padding: '0.25rem 0.75rem',
+              borderRadius: '20px',
+              fontSize: '0.875rem',
+              fontWeight: '600',
+            }}
+          >
+            ✏️ Edit Mode
+          </span>
+
+          {selectedCategoryName && (
+            <span
+              style={{
+                backgroundColor: getCategoryColor(selectedCategoryName),
+                padding: '0.25rem 0.75rem',
+                borderRadius: '20px',
+                fontSize: '0.875rem',
+                fontWeight: '600',
+              }}
+            >
+              {selectedCategoryName}
+            </span>
+          )}
+
+          <span
+            style={{
+              backgroundColor: difficultyColors[difficulty] || '#868e96',
+              color:
+                difficulty === 'easy'
+                  ? 'black'
+                  : difficulty === 'medium'
+                    ? 'black'
+                    : 'White',
+              padding: '0.25rem 0.75rem',
+              borderRadius: '20px',
+              fontSize: '0.875rem',
+              fontWeight: '600',
+              textTransform: 'capitalize',
+            }}
+          >
+            {difficulty}
+          </span>
+        </div>
+
+        <h1
+          style={{
+            fontSize: '2.5rem',
+            fontWeight: 'bold',
+            marginBottom: '0.5rem',
+            color: '#212529',
+            lineHeight: '1.2',
+          }}
+        >
+          Edit Recipe
+        </h1>
+      </div>
+
+      <form
+        onSubmit={handleSubmit}
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '1.5rem',
+        }}
+      >
+        {/* Title */}
+        <div
+          style={{
+            padding: '1.25rem',
+            backgroundColor: '#fff',
+            borderRadius: '12px',
+            borderLeft: '4px solid #ff6b6b',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+          }}
+        >
+          <label
+            style={{
+              display: 'block',
+              fontWeight: 'bold',
+              color: '#212529',
+              marginBottom: '0.5rem',
+            }}
+          >
             Recipe Title *
           </label>
           <input
@@ -193,108 +322,335 @@ const EditRecipe = () => {
             value={title}
             onChange={(e) => updateField('title', e.target.value)}
             required
-            className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 outline-none"
+            style={{
+              width: '100%',
+              padding: '0.75rem',
+              border: '1px solid #e9ecef',
+              borderRadius: '8px',
+              fontSize: '1rem',
+              outline: 'none',
+              transition: 'all 0.2s ease',
+            }}
+            onFocus={(e) => {
+              e.target.style.borderColor = '#ff6b6b'
+              e.target.style.boxShadow = '0 0 0 3px rgba(255,107,107,0.1)'
+            }}
+            onBlur={(e) => {
+              e.target.style.borderColor = '#e9ecef'
+              e.target.style.boxShadow = 'none'
+            }}
           />
         </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-1">Description</label>
+        {/* Description */}
+        <div
+          style={{
+            padding: '1.25rem',
+            backgroundColor: '#fff',
+            borderRadius: '12px',
+            borderLeft: '4px solid #ff6b6b',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+          }}
+        >
+          <label
+            style={{
+              display: 'block',
+              fontWeight: 'bold',
+              color: '#212529',
+              marginBottom: '0.5rem',
+            }}
+          >
+            Description
+          </label>
           <textarea
-            rows={3}
             value={description}
             onChange={(e) => updateField('description', e.target.value)}
-            className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 outline-none"
+            rows="3"
+            style={{
+              width: '100%',
+              padding: '0.75rem',
+              border: '1px solid #e9ecef',
+              borderRadius: '8px',
+              fontSize: '1rem',
+              outline: 'none',
+              resize: 'vertical',
+              transition: 'all 0.2s ease',
+            }}
+            onFocus={(e) => {
+              e.target.style.borderColor = '#ff6b6b'
+              e.target.style.boxShadow = '0 0 0 3px rgba(255,107,107,0.1)'
+            }}
+            onBlur={(e) => {
+              e.target.style.borderColor = '#e9ecef'
+              e.target.style.boxShadow = 'none'
+            }}
           />
         </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-1">Category *</label>
-          <select
-            value={category}
-            onChange={(e) => updateField('category', e.target.value)}
-            required
-            className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 outline-none"
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: '1rem',
+          }}
+        >
+          <div
+            style={{
+              padding: '1.25rem',
+              backgroundColor: '#fff',
+              borderRadius: '12px',
+              borderLeft: '4px solid #ff6b6b',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+            }}
           >
-            <option value="">Select a category</option>
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.name}
-              </option>
-            ))}
-          </select>
+            <label
+              style={{
+                display: 'block',
+                fontWeight: 'bold',
+                color: '#212529',
+                marginBottom: '0.5rem',
+              }}
+            >
+              Category *
+            </label>
+            <select
+              value={category}
+              onChange={(e) => updateField('category', e.target.value)}
+              required
+              style={{
+                width: '100%',
+                padding: '0.75rem',
+                border: '1px solid #e9ecef',
+                borderRadius: '8px',
+                fontSize: '1rem',
+                outline: 'none',
+                backgroundColor: '#fff',
+                cursor: 'pointer',
+              }}
+            >
+              <option value="">Select a category</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div
+            style={{
+              padding: '1.25rem',
+              backgroundColor: '#fff',
+              borderRadius: '12px',
+              borderLeft: '4px solid #ff6b6b',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+            }}
+          >
+            <label
+              style={{
+                display: 'block',
+                fontWeight: 'bold',
+                color: '#212529',
+                marginBottom: '0.5rem',
+              }}
+            >
+              Difficulty
+            </label>
+            <select
+              value={difficulty}
+              onChange={(e) => updateField('difficulty', e.target.value)}
+              style={{
+                width: '100%',
+                padding: '0.75rem',
+                border: '1px solid #e9ecef',
+                borderRadius: '8px',
+                fontSize: '1rem',
+                outline: 'none',
+                backgroundColor: '#fff',
+                cursor: 'pointer',
+              }}
+            >
+              <option value="easy">Easy 🟢</option>
+              <option value="medium">Medium 🟡</option>
+              <option value="hard">Hard 🔴</option>
+            </select>
+          </div>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-1">Recipe Image</label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageUpload}
-            disabled={uploading}
-            className="block w-full text-sm"
-          />
-          {uploading && (
-            <p className="text-sm text-gray-500 mt-1">Uploading...</p>
-          )}
-          {imageUrl && (
-            <img
-              src={imageUrl}
-              alt="Preview"
-              className="mt-3 w-40 rounded-lg shadow"
-            />
-          )}
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+            gap: '1rem',
+            padding: '1.5rem',
+            backgroundColor: '#f8f9fa',
+            borderRadius: '12px',
+          }}
+        >
           {[
-            { key: 'prepTime', label: 'Prep Time (min)' },
-            { key: 'cookTime', label: 'Cook Time (min)' },
-            { key: 'servings', label: 'Servings' },
-          ].map(({ key, label }) => (
-            <div key={key}>
-              <label className="block text-sm font-medium mb-1">{label}</label>
+            { key: 'prepTime', label: 'Prep Time', icon: '⏱️' },
+            { key: 'cookTime', label: 'Cook Time', icon: '🔥' },
+            { key: 'servings', label: 'Servings', icon: '🍽️' },
+          ].map(({ key, label, icon }) => (
+            <div key={key} style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>
+                {icon}
+              </div>
+              <div style={{ fontSize: '0.875rem', color: '#868e96' }}>
+                {label}
+              </div>
               <input
                 type="number"
                 min="0"
                 value={formData[key]}
                 onChange={(e) => updateField(key, e.target.value)}
-                className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 outline-none"
+                style={{
+                  width: '100%',
+                  padding: '0.5rem',
+                  border: '1px solid #e9ecef',
+                  borderRadius: '8px',
+                  fontSize: '1rem',
+                  textAlign: 'center',
+                  marginTop: '0.5rem',
+                  outline: 'none',
+                }}
               />
             </div>
           ))}
         </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-1">Difficulty</label>
-          <select
-            value={difficulty}
-            onChange={(e) => updateField('difficulty', e.target.value)}
-            className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 outline-none"
+        <div
+          style={{
+            padding: '1.25rem',
+            backgroundColor: '#fff',
+            borderRadius: '12px',
+            borderLeft: '4px solid #ff6b6b',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+          }}
+        >
+          <label
+            style={{
+              display: 'block',
+              fontWeight: 'bold',
+              color: '#212529',
+              marginBottom: '0.5rem',
+            }}
           >
-            <option value="easy">Easy</option>
-            <option value="medium">Medium</option>
-            <option value="hard">Hard</option>
-          </select>
+            Recipe Image
+          </label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            disabled={uploading}
+            style={{ display: 'block', marginBottom: '0.5rem' }}
+          />
+          {uploading && (
+            <p style={{ color: '#868e96', fontSize: '0.875rem' }}>
+              Uploading...
+            </p>
+          )}
+          {imageUrl && (
+            <div
+              style={{
+                marginTop: '1rem',
+                borderRadius: '16px',
+                overflow: 'hidden',
+                boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
+              }}
+            >
+              <img
+                src={imageUrl}
+                alt="Preview"
+                style={{
+                  width: '100%',
+                  height: 'auto',
+                  display: 'block',
+                }}
+              />
+            </div>
+          )}
         </div>
 
-        <div>
-          <h3 className="font-semibold mb-2">Ingredients</h3>
-          <div className="space-y-2">
+        <section>
+          <h2
+            style={{
+              fontSize: '1.5rem',
+              fontWeight: 'bold',
+              marginBottom: '1rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+            }}
+          >
+            <span>🥘</span> Ingredients
+          </h2>
+          <div style={{ display: 'grid', gap: '0.75rem' }}>
             {ingredients.map((ing, index) => (
-              <div key={index} className="flex gap-2">
+              <div
+                key={index}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.75rem',
+                  padding: '0.75rem',
+                  backgroundColor: '#fff',
+                  borderRadius: '8px',
+                  border: '1px solid #e9ecef',
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                <span
+                  style={{
+                    width: '24px',
+                    height: '24px',
+                    backgroundColor: '#ff6b6b',
+                    color: 'white',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '0.75rem',
+                    fontWeight: 'bold',
+                    flexShrink: 0,
+                  }}
+                >
+                  {index + 1}
+                </span>
                 <input
                   type="text"
                   value={ing}
                   onChange={(e) =>
                     updateListItem('ingredients', index, e.target.value)
                   }
-                  className="flex-1 border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 outline-none"
+                  placeholder={`Ingredient ${index + 1}`}
+                  style={{
+                    flex: 1,
+                    padding: '0.5rem',
+                    border: '1px solid #e9ecef',
+                    borderRadius: '6px',
+                    outline: 'none',
+                  }}
                 />
                 {ingredients.length > 1 && (
                   <button
                     type="button"
                     onClick={() => removeListItem('ingredients', index)}
-                    className="bg-red-500 text-white px-3 rounded-lg hover:bg-red-600"
+                    style={{
+                      padding: '0.5rem 0.75rem',
+                      backgroundColor: '#ff6b6b',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      fontSize: '0.875rem',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.backgroundColor = '#fa5252'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.backgroundColor = '#ff6b6b'
+                    }}
                   >
                     ✕
                   </button>
@@ -305,29 +661,110 @@ const EditRecipe = () => {
           <button
             type="button"
             onClick={() => addListItem('ingredients')}
-            className="mt-2 text-sm bg-green-500 text-white px-3 py-1 rounded-lg hover:bg-green-600"
+            style={{
+              marginTop: '1rem',
+              padding: '0.75rem 1.5rem',
+              backgroundColor: '#51cf66',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontWeight: '600',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              transition: 'all 0.2s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.backgroundColor = '#40c057'
+              e.target.style.transform = 'translateY(-2px)'
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.backgroundColor = '#51cf66'
+              e.target.style.transform = 'translateY(0)'
+            }}
           >
             + Add Ingredient
           </button>
-        </div>
+        </section>
 
-        <div>
-          <h3 className="font-semibold mb-2">Instructions</h3>
-          <div className="space-y-2">
+        <section>
+          <h2
+            style={{
+              fontSize: '1.5rem',
+              fontWeight: 'bold',
+              marginBottom: '1rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+            }}
+          >
+            <span>👨‍🍳</span> Instructions
+          </h2>
+          <div style={{ display: 'grid', gap: '1rem' }}>
             {instructions.map((inst, index) => (
-              <div key={index} className="flex gap-2">
-                <textarea
-                  value={inst}
-                  onChange={(e) =>
-                    updateListItem('instructions', index, e.target.value)
-                  }
-                  className="flex-1 border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 outline-none"
-                />
+              <div
+                key={index}
+                style={{
+                  display: 'flex',
+                  gap: '1rem',
+                  padding: '1.25rem',
+                  backgroundColor: '#fff',
+                  borderRadius: '12px',
+                  borderLeft: '4px solid #ff6b6b',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: '1.5rem',
+                    fontWeight: 'bold',
+                    color: '#ff6b6b',
+                    lineHeight: 1,
+                  }}
+                >
+                  {index + 1}
+                </span>
+                <div style={{ flex: 1 }}>
+                  <textarea
+                    value={inst}
+                    onChange={(e) =>
+                      updateListItem('instructions', index, e.target.value)
+                    }
+                    placeholder={`Step ${index + 1}`}
+                    rows="2"
+                    style={{
+                      width: '100%',
+                      padding: '0.75rem',
+                      border: '1px solid #e9ecef',
+                      borderRadius: '8px',
+                      outline: 'none',
+                      resize: 'vertical',
+                      fontSize: '1rem',
+                    }}
+                  />
+                </div>
                 {instructions.length > 1 && (
                   <button
                     type="button"
                     onClick={() => removeListItem('instructions', index)}
-                    className="bg-red-500 text-white px-3 rounded-lg hover:bg-red-600"
+                    style={{
+                      padding: '0.5rem 0.75rem',
+                      backgroundColor: '#ff6b6b',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      fontSize: '0.875rem',
+                      alignSelf: 'flex-start',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.backgroundColor = '#fa5252'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.backgroundColor = '#ff6b6b'
+                    }}
                   >
                     ✕
                   </button>
@@ -338,21 +775,111 @@ const EditRecipe = () => {
           <button
             type="button"
             onClick={() => addListItem('instructions')}
-            className="mt-2 text-sm bg-green-500 text-white px-3 py-1 rounded-lg hover:bg-green-600"
+            style={{
+              marginTop: '1rem',
+              padding: '0.75rem 1.5rem',
+              backgroundColor: '#51cf66',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontWeight: '600',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              transition: 'all 0.2s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.backgroundColor = '#40c057'
+              e.target.style.transform = 'translateY(-2px)'
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.backgroundColor = '#51cf66'
+              e.target.style.transform = 'translateY(0)'
+            }}
           >
             + Add Step
           </button>
-        </div>
+        </section>
 
-        <button
-          type="submit"
-          disabled={saving}
-          className="w-full bg-indigo-600 text-white py-3 rounded-xl font-medium hover:bg-indigo-700 disabled:bg-indigo-300"
+        <div
+          style={{
+            display: 'flex',
+            gap: '1rem',
+            marginTop: '2rem',
+            paddingTop: '2rem',
+            borderTop: '2px solid #f8f9fa',
+          }}
         >
-          {saving ? 'Saving...' : 'Save Changes'}
-        </button>
+          <button
+            type="submit"
+            disabled={saving}
+            style={{
+              flex: 1,
+              padding: '1rem',
+              backgroundColor: saving ? '#adb5bd' : '#ff6b6b',
+              color: 'white',
+              border: 'none',
+              borderRadius: '12px',
+              fontSize: '1.1rem',
+              fontWeight: '600',
+              cursor: saving ? 'not-allowed' : 'pointer',
+              transition: 'all 0.2s ease',
+            }}
+            onMouseEnter={(e) => {
+              if (!saving) {
+                e.target.style.backgroundColor = '#fa5252'
+                e.target.style.transform = 'translateY(-2px)'
+                e.target.style.boxShadow = '0 10px 20px rgba(255,107,107,0.3)'
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!saving) {
+                e.target.style.backgroundColor = '#ff6b6b'
+                e.target.style.transform = 'translateY(0)'
+                e.target.style.boxShadow = 'none'
+              }
+            }}
+          >
+            {saving ? '💾 Saving...' : '✅ Save Changes'}
+          </button>
+
+          <Link
+            to={`/recipe/${id}`}
+            style={{
+              flex: 1,
+              textDecoration: 'none',
+            }}
+          >
+            <button
+              type="button"
+              style={{
+                width: '100%',
+                padding: '1rem',
+                backgroundColor: '#e9ecef',
+                color: '#495057',
+                border: 'none',
+                borderRadius: '12px',
+                fontSize: '1.1rem',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = '#dee2e6'
+                e.target.style.transform = 'translateY(-2px)'
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = '#e9ecef'
+                e.target.style.transform = 'translateY(0)'
+              }}
+            >
+              ❌ Cancel
+            </button>
+          </Link>
+        </div>
       </form>
-    </section>
+    </article>
   )
 }
 
