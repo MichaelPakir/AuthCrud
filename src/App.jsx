@@ -9,6 +9,7 @@ import Favorites from './pages/Favorites'
 import CategoryPage from './pages/CategoryPage'
 import RecipeDetail from './pages/RecipeDetail'
 import AddRecipe from './components/AddRecipe'
+import EditRecipe from './pages/EditRecipe'
 
 const App = () => {
   return (
@@ -22,6 +23,7 @@ const App = () => {
         // protected pages
         <Route element={<ProtectedRoutes />}>
           <Route path="/add-recipe" element={<AddRecipe />} />
+          <Route path="/edit/:id" element={<EditRecipe />} />
           <Route path="/my-recipes" element={<MyRecipes />} />
           <Route path="/favorites" element={<Favorites />} />
         </Route>

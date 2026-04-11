@@ -18,7 +18,6 @@ const AddRecipe = () => {
   const [servings, setServings] = useState('')
   const [difficulty, setDifficulty] = useState('easy')
 
-  // Other state
   const [categories, setCategories] = useState([])
   const [uploading, setUploading] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -123,7 +122,6 @@ const AddRecipe = () => {
         onSubmit={handleSubmit}
         style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}
       >
-        {/* Title */}
         <div>
           <label>Recipe Title *</label>
           <input
@@ -136,7 +134,6 @@ const AddRecipe = () => {
           />
         </div>
 
-        {/* Description */}
         <div>
           <label>Description</label>
           <textarea
@@ -148,7 +145,6 @@ const AddRecipe = () => {
           />
         </div>
 
-        {/* Category Dropdown */}
         <div>
           <label>Category *</label>
           <select
@@ -166,7 +162,6 @@ const AddRecipe = () => {
           </select>
         </div>
 
-        {/* Timing & Servings Row */}
         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
           <div style={{ flex: 1, minWidth: '120px' }}>
             <label>Prep Time (mins)</label>
@@ -205,7 +200,6 @@ const AddRecipe = () => {
           </div>
         </div>
 
-        {/* Difficulty */}
         <div>
           <label>Difficulty</label>
           <select
@@ -219,7 +213,6 @@ const AddRecipe = () => {
           </select>
         </div>
 
-        {/* Image Upload */}
         <div>
           <label>Recipe Image</label>
           <input
@@ -238,7 +231,6 @@ const AddRecipe = () => {
           )}
         </div>
 
-        {/* Ingredients */}
         <div>
           <label>Ingredients</label>
           {ingredients.map((ing, index) => (
@@ -265,7 +257,6 @@ const AddRecipe = () => {
           </button>
         </div>
 
-        {/* Instructions */}
         <div>
           <label>Instructions</label>
           {instructions.map((inst, index) => (
@@ -292,7 +283,6 @@ const AddRecipe = () => {
           </button>
         </div>
 
-        {/* Submit Button */}
         <button
           type="submit"
           disabled={saving}
