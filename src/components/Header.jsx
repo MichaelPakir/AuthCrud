@@ -14,7 +14,7 @@ const Header = () => {
     try {
       await loginWithGoogle()
     } catch (error) {
-      alert('Login failed!')
+      alert('Login failed!', error)
     }
   }
 
