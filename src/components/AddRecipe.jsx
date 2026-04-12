@@ -42,7 +42,7 @@ const AddRecipe = () => {
       const url = await uploadImage(file)
       setImageUrl(url)
     } catch (error) {
-      alert('Image upload failed!')
+      alert('Image upload failed!', error)
     } finally {
       setUploading(false)
     }
@@ -116,17 +116,15 @@ const AddRecipe = () => {
 
   return (
     <article className="max-w-3xl mx-auto px-4 py-8 animate-fade-in">
-      {/* Header */}
       <div className="mb-8">
         <h1 className="text-4xl font-bold text-gray-800 mb-2">🍳 Add Recipe</h1>
         <p className="text-gray-500">Create a new delicious recipe</p>
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-        {/* Title */}
         <div className="bg-white p-5 rounded-xl shadow-sm border-l-4 border-red-400">
           <label className="block font-semibold text-gray-800 mb-2">
-            Recipe Title *
+            Recipe Title
           </label>
           <input
             type="text"
@@ -138,7 +136,6 @@ const AddRecipe = () => {
           />
         </div>
 
-        {/* Description */}
         <div className="bg-white p-5 rounded-xl shadow-sm border-l-4 border-red-400">
           <label className="block font-semibold text-gray-800 mb-2">
             Description
@@ -152,11 +149,10 @@ const AddRecipe = () => {
           />
         </div>
 
-        {/* Category + Difficulty */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="bg-white p-5 rounded-xl shadow-sm border-l-4 border-red-400">
             <label className="block font-semibold text-gray-800 mb-2">
-              Category *
+              Category
             </label>
             <select
               value={category}
@@ -189,7 +185,6 @@ const AddRecipe = () => {
           </div>
         </div>
 
-        {/* Times */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-gray-50 p-5 rounded-xl">
           <div className="text-center">
             <div className="text-2xl">⏱️</div>
@@ -228,7 +223,6 @@ const AddRecipe = () => {
           </div>
         </div>
 
-        {/* Image Upload */}
         <div className="bg-white p-5 rounded-xl shadow-sm border-l-4 border-red-400">
           <label className="block font-semibold text-gray-800 mb-2">
             Recipe Image
@@ -255,7 +249,6 @@ const AddRecipe = () => {
           )}
         </div>
 
-        {/* Ingredients */}
         <section>
           <h2 className="text-xl font-bold mb-3">🥘 Ingredients</h2>
 
@@ -291,7 +284,6 @@ const AddRecipe = () => {
           </button>
         </section>
 
-        {/* Instructions */}
         <section>
           <h2 className="text-xl font-bold mb-3">👨‍🍳 Instructions</h2>
 
@@ -327,7 +319,6 @@ const AddRecipe = () => {
           </button>
         </section>
 
-        {/* Submit */}
         <button
           type="submit"
           disabled={saving}

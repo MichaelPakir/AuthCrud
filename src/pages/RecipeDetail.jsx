@@ -35,138 +35,82 @@ const RecipeDetail = () => {
 
   if (loading) {
     return (
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '50vh',
-          fontSize: '1.2rem',
-          color: '#666',
-        }}
-      >
-        <span style={{ marginRight: '0.5rem' }}>🍳</span> Loading recipe...
+      <div className="flex justify-center items-center h-[50vh] text-lg text-gray-600">
+        <span className="mr-2">🍳</span> Loading recipe...
       </div>
     )
   }
 
   if (!recipe) {
     return (
-      <div style={{ textAlign: 'center', padding: '4rem 2rem' }}>
-        <h2 style={{ fontSize: '2rem', marginBottom: '1rem' }}>😕</h2>
+      <div className="text-center py-16 px-8">
+        <h2 className="text-3xl mb-4">😕</h2>
         <p>Recipe not found</p>
-        <Link to="/" style={{ color: '#ff6b6b', textDecoration: 'none' }}>
+        <Link to="/" className="text-red-400 no-underline hover:underline">
           ← Back to home
         </Link>
       </div>
     )
   }
 
-  const difficultyColors = {
-    easy: '#51cf66',
-    medium: '#ffd43b',
-    hard: '#ff6b6b',
+  const getCategoryColor = (name) => {
+    const lower = name?.toLowerCase()
+    if (lower === 'breakfast') return 'bg-orange-200'
+    if (lower === 'lunch') return 'bg-green-300'
+    if (lower === 'dinner') return 'bg-pink-300'
+    if (lower === 'dessert') return 'bg-purple-300'
+    return 'bg-gray-200'
   }
 
+  const getDifficultyStyles = (difficulty) => {
+    const styles = {
+      easy: { bg: 'bg-green-400', text: 'text-green-700' },
+      medium: { bg: 'bg-yellow-400', text: 'text-yellow-700' },
+      hard: { bg: 'bg-red-400', text: 'text-red-700' },
+    }
+    return styles[difficulty] || { bg: 'bg-gray-400', text: 'text-gray-700' }
+  }
+
+  const diffStyles = getDifficultyStyles(recipe.difficulty)
+
   return (
-    <article
-      style={{
-        maxWidth: '800px',
-        margin: '0 auto',
-        padding: '2rem',
-        animation: 'fadeIn 0.5s ease',
-      }}
-    >
-      <div style={{ marginBottom: '2rem' }}>
-        <div
-          style={{
-            display: 'flex',
-            gap: '0.5rem',
-            marginBottom: '1rem',
-            flexWrap: 'wrap',
-          }}
-        >
+    <article className="max-w-3xl mx-auto p-8 animate-fadeIn">
+      <div className="mb-8">
+        <div className="flex gap-2 mb-4 flex-wrap">
           <span
-            style={{
-              backgroundColor:
-                recipe.categoryName?.toLowerCase() === 'breakfast'
-                  ? '#FFE4B5'
-                  : recipe.categoryName?.toLowerCase() === 'lunch'
-                    ? '#90EE90'
-                    : recipe.categoryName?.toLowerCase() === 'dinner'
-                      ? '#FFB6C1'
-                      : recipe.categoryName?.toLowerCase() === 'dessert'
-                        ? '#DDA0DD'
-                        : '#E9ECEF',
-              padding: '0.25rem 0.75rem',
-              borderRadius: '20px',
-              fontSize: '0.875rem',
-              fontWeight: '600',
-            }}
+            className={`${getCategoryColor(
+              recipe.categoryName
+            )} px-3 py-1 rounded-full text-sm font-semibold`}
           >
             {recipe.categoryName}
           </span>
 
           <span
-            style={{
-              backgroundColor: difficultyColors[recipe.difficulty] || '#868e96',
-              color:
-                recipe.difficulty === 'easy'
-                  ? '#2b8a3e'
-                  : recipe.difficulty === 'medium'
-                    ? '#e67700'
-                    : '#c92a2a',
-              padding: '0.25rem 0.75rem',
-              borderRadius: '20px',
-              fontSize: '0.875rem',
-              fontWeight: '600',
-              textTransform: 'capitalize',
-            }}
+            className={`${diffStyles.bg} ${diffStyles.text} px-3 py-1 rounded-full text-sm font-semibold capitalize`}
           >
             {recipe.difficulty}
           </span>
         </div>
 
-        <h1
-          style={{
-            fontSize: '2.5rem',
-            fontWeight: 'bold',
-            marginBottom: '0.5rem',
-            color: '#212529',
-            lineHeight: '1.2',
-          }}
-        >
-          {recipe.title}
-        </h1>
+        <div className="flex items-start justify-between gap-4 mb-2">
+          <h1 className="text-4xl font-bold text-gray-900 leading-tight">
+            {recipe.title}
+          </h1>
 
-        {user?.uid === recipe.authorId && (
-          <Link to={`/edit/${id}`} style={{ marginLeft: 'auto' }}>
-            <button className="flex-1 bg-gray-200 text-gray-800 py-2 rounded hover:bg-gray-300">
-              Edit Recipe
-            </button>
-          </Link>
-        )}
+          {user?.uid === recipe.authorId && (
+            <Link to={`/edit/${id}`}>
+              <button className="bg-gray-200 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors">
+                Edit Recipe
+              </button>
+            </Link>
+          )}
+        </div>
 
-        <p
-          style={{
-            fontSize: '1.125rem',
-            color: '#495057',
-            lineHeight: '1.6',
-            marginBottom: '1rem',
-          }}
-        >
+        <p className="text-lg text-gray-700 leading-relaxed mb-4">
           {recipe.description}
         </p>
 
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            color: '#868e96',
-            fontSize: '0.875rem',
-          }}
-        >
+        <div className="flex items-center gap-2 text-gray-500 text-sm">
           <span>👤</span>
           <span>By {recipe.authorName}</span>
           <span>•</span>
@@ -177,226 +121,82 @@ const RecipeDetail = () => {
       </div>
 
       {recipe.imageUrl && (
-        <div
-          style={{
-            marginBottom: '2rem',
-            borderRadius: '16px',
-            overflow: 'hidden',
-            boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
-          }}
-        >
+        <div className="mb-8 rounded-2xl overflow-hidden shadow-lg">
           <img
             src={recipe.imageUrl}
             alt={recipe.title}
-            style={{
-              width: '100%',
-              height: 'auto',
-              display: 'block',
-              transition: 'transform 0.3s ease',
-            }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.transform = 'scale(1.02)')
-            }
-            onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+            className="w-full h-auto block transition-transform duration-300 hover:scale-[1.02]"
           />
         </div>
       )}
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
-          gap: '1rem',
-          marginBottom: '2rem',
-          padding: '1.5rem',
-          backgroundColor: '#f8f9fa',
-          borderRadius: '12px',
-        }}
-      >
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>⏱️</div>
-          <div style={{ fontSize: '0.875rem', color: '#868e96' }}>
-            Prep Time
-          </div>
-          <div style={{ fontWeight: 'bold', color: '#212529' }}>
-            {recipe.prepTime} min
-          </div>
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-4 mb-8 p-6 bg-gray-50 rounded-xl">
+        <div className="text-center">
+          <div className="text-2xl mb-1">⏱️</div>
+          <div className="text-sm text-gray-500">Prep Time</div>
+          <div className="font-bold text-gray-900">{recipe.prepTime} min</div>
         </div>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>🔥</div>
-          <div style={{ fontSize: '0.875rem', color: '#868e96' }}>
-            Cook Time
-          </div>
-          <div style={{ fontWeight: 'bold', color: '#212529' }}>
-            {recipe.cookTime} min
-          </div>
+        <div className="text-center">
+          <div className="text-2xl mb-1">🔥</div>
+          <div className="text-sm text-gray-500">Cook Time</div>
+          <div className="font-bold text-gray-900">{recipe.cookTime} min</div>
         </div>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>🍽️</div>
-          <div style={{ fontSize: '0.875rem', color: '#868e96' }}>Servings</div>
-          <div style={{ fontWeight: 'bold', color: '#212529' }}>
-            {recipe.servings}
-          </div>
+        <div className="text-center">
+          <div className="text-2xl mb-1">🍽️</div>
+          <div className="text-sm text-gray-500">Servings</div>
+          <div className="font-bold text-gray-900">{recipe.servings}</div>
         </div>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>⚡</div>
-          <div style={{ fontSize: '0.875rem', color: '#868e96' }}>Total</div>
-          <div style={{ fontWeight: 'bold', color: '#212529' }}>
+        <div className="text-center">
+          <div className="text-2xl mb-1">⚡</div>
+          <div className="text-sm text-gray-500">Total</div>
+          <div className="font-bold text-gray-900">
             {recipe.prepTime + recipe.cookTime} min
           </div>
         </div>
       </div>
 
-      <section style={{ marginBottom: '2rem' }}>
-        <h2
-          style={{
-            fontSize: '1.5rem',
-            fontWeight: 'bold',
-            marginBottom: '1rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-          }}
-        >
+      <section className="mb-8">
+        <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
           <span>🥘</span> Ingredients
         </h2>
-        <ul
-          style={{
-            listStyle: 'none',
-            padding: 0,
-            display: 'grid',
-            gap: '0.75rem',
-          }}
-        >
+        <ul className="list-none p-0 grid gap-3">
           {recipe.ingredients?.map((ing, i) => (
             <li
               key={i}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.75rem',
-                padding: '0.75rem',
-                backgroundColor: '#fff',
-                borderRadius: '8px',
-                border: '1px solid #e9ecef',
-                transition: 'all 0.2s ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#f8f9fa'
-                e.currentTarget.style.transform = 'translateX(4px)'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = '#fff'
-                e.currentTarget.style.transform = 'translateX(0)'
-              }}
+              className="flex items-center gap-3 p-3 bg-white rounded-lg border border-gray-200 transition-all duration-200 hover:bg-gray-50 hover:translate-x-1"
             >
-              <span
-                style={{
-                  width: '24px',
-                  height: '24px',
-                  backgroundColor: '#ff6b6b',
-                  color: 'white',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '0.75rem',
-                  fontWeight: 'bold',
-                  flexShrink: 0,
-                }}
-              >
+              <span className="w-6 h-6 bg-red-400 text-white rounded-full flex items-center justify-center text-xs font-bold shrink-0">
                 {i + 1}
               </span>
-              <span style={{ color: '#495057' }}>{ing}</span>
+              <span className="text-gray-700">{ing}</span>
             </li>
           ))}
         </ul>
       </section>
 
       <section>
-        <h2
-          style={{
-            fontSize: '1.5rem',
-            fontWeight: 'bold',
-            marginBottom: '1rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-          }}
-        >
+        <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
           <span>👨‍🍳</span> Instructions
         </h2>
-        <div style={{ display: 'grid', gap: '1rem' }}>
+        <div className="grid gap-4">
           {recipe.instructions?.map((inst, i) => (
             <div
               key={i}
-              style={{
-                display: 'flex',
-                gap: '1rem',
-                padding: '1.25rem',
-                backgroundColor: '#fff',
-                borderRadius: '12px',
-                borderLeft: '4px solid #ff6b6b',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
-                transition: 'all 0.2s ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)'
-                e.currentTarget.style.transform = 'translateY(-2px)'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.04)'
-                e.currentTarget.style.transform = 'translateY(0)'
-              }}
+              className="flex gap-4 p-5 bg-white rounded-xl border-l-4 border-red-400 shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-0.5"
             >
-              <span
-                style={{
-                  fontSize: '1.5rem',
-                  fontWeight: 'bold',
-                  color: '#ff6b6b',
-                  lineHeight: 1,
-                }}
-              >
+              <span className="text-2xl font-bold text-red-400 leading-none">
                 {i + 1}
               </span>
-              <p
-                style={{
-                  margin: 0,
-                  color: '#495057',
-                  lineHeight: '1.6',
-                  flex: 1,
-                }}
-              >
-                {inst}
-              </p>
+              <p className="m-0 text-gray-700 leading-relaxed flex-1">{inst}</p>
             </div>
           ))}
         </div>
       </section>
 
-      <div style={{ marginTop: '3rem', textAlign: 'center' }}>
+      <div className="mt-12 text-center">
         <Link
           to="/"
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            padding: '0.75rem 1.5rem',
-            backgroundColor: '#ff6b6b',
-            color: 'white',
-            textDecoration: 'none',
-            borderRadius: '8px',
-            fontWeight: '600',
-            transition: 'all 0.2s ease',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = '#fa5252'
-            e.currentTarget.style.transform = 'translateY(-2px)'
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = '#ff6b6b'
-            e.currentTarget.style.transform = 'translateY(0)'
-          }}
+          className="inline-flex items-center gap-2 px-6 py-3 bg-red-400 text-white no-underline rounded-lg font-semibold transition-all duration-200 hover:bg-red-500 hover:-translate-y-0.5"
         >
           ← Back to Recipes
         </Link>

@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import { collection, query, where, getDocs } from 'firebase/firestore'
 import { db } from '../lib/firebase'
 import RecipeCard from '../components/RecipeCard'
+import { getCategoryById, getCategoryIcon } from '../services/categories'
 
 const CategoryPage = () => {
   const { id: categoryId } = useParams()
@@ -10,6 +11,9 @@ const CategoryPage = () => {
   const [categoryName, setCategoryName] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+
+  const category = getCategoryById(categoryId)
+  const icon = getCategoryIcon(categoryId)
 
   useEffect(() => {
     let isMounted = true
@@ -69,8 +73,8 @@ const CategoryPage = () => {
 
   if (loading) {
     return (
-      <div style={{ textAlign: 'center', padding: '4rem' }}>
-        <span style={{ marginRight: '0.5rem' }}>🍳</span>
+      <div className="text-center py-16">
+        <span className="mr-2">🍳</span>
         <span>Loading...</span>
       </div>
     )
@@ -78,8 +82,8 @@ const CategoryPage = () => {
 
   if (error) {
     return (
-      <div style={{ textAlign: 'center', padding: '4rem', color: '#ff6b6b' }}>
-        <h2 style={{ fontSize: '2rem', marginBottom: '1rem' }}>😕</h2>
+      <div className="text-center py-16 text-red-400">
+        <h2 className="text-3xl mb-4">😕</h2>
         <p>{error}</p>
       </div>
     )
@@ -87,10 +91,10 @@ const CategoryPage = () => {
 
   if (recipes.length === 0) {
     return (
-      <div style={{ textAlign: 'center', padding: '4rem' }}>
-        <h2 style={{ fontSize: '2rem', marginBottom: '1rem' }}>🍽️</h2>
+      <div className="text-center py-16">
+        <h2 className="text-3xl mb-4">🍽️</h2>
         <p>No recipes found in this category.</p>
-        <Link to="/" style={{ color: '#ff6b6b', textDecoration: 'none' }}>
+        <Link to="/" className="text-red-400 no-underline hover:underline">
           ← Browse all recipes
         </Link>
       </div>
@@ -98,20 +102,19 @@ const CategoryPage = () => {
   }
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem' }}>
-      <h1
-        style={{
-          fontSize: '2.5rem',
-          fontWeight: 'bold',
-          marginBottom: '0.5rem',
-          color: '#212529',
-        }}
+    <div className="max-w-6xl mx-auto p-8">
+      <div
+        className="h-48 rounded-2xl mb-8 flex flex-col items-center justify-center shadow-lg"
+        style={{ backgroundColor: category?.color || '#E9ECEF' }}
       >
-        {categoryName || categoryId}
-      </h1>
-      <p style={{ color: '#868e96', marginBottom: '2rem' }}>
-        {recipes.length} recipe{recipes.length !== 1 ? 's' : ''} found
-      </p>
+        <span className="text-6xl mb-2">{icon}</span>
+        <h1 className="text-4xl font-bold text-gray-800">
+          {categoryName || categoryId}
+        </h1>
+        <p className="text-gray-600 mt-2 font-medium">
+          {recipes.length} recipe{recipes.length !== 1 ? 's' : ''} found
+        </p>
+      </div>
 
       <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-8">
         {recipes.map((recipe) => (

@@ -42,62 +42,38 @@ const Home = () => {
   }
 
   return (
-    <section style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
-      <div style={{ marginBottom: '3rem', textAlign: 'center' }}>
-        <h1
-          style={{
-            fontSize: '2.5rem',
-            fontWeight: 'bold',
-            marginBottom: '0.5rem',
-            color: '#333',
-          }}
-        >
+    <section className="px-8 py-8 max-w-6xl mx-auto">
+      <div className="mb-12 text-center">
+        <h1 className="text-4xl font-bold mb-2 text-gray-800">
           What are you craving?
         </h1>
-        <p style={{ color: '#666', fontSize: '1.1rem', marginBottom: '2rem' }}>
+        <p className="text-gray-600 text-lg mb-8">
           Choose a category to explore delicious recipes
         </p>
 
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
-            gap: '1.5rem',
-          }}
-        >
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
           {categories.map((cat) => (
             <Link
               key={cat.id}
               to={`/category/${encodeURIComponent(cat.id)}`}
-              style={{ textDecoration: 'none' }}
+              className="no-underline group"
             >
               <div
-                style={{
-                  backgroundColor: cat.color,
-                  height: '150px',
-                  borderRadius: '16px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontWeight: 'bold',
-                  fontSize: '1.3rem',
-                  color: '#333',
-                  boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                  transition: 'all 0.3s ease',
-                  cursor: 'pointer',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform =
-                    'translateY(-5px) scale(1.02)'
-                  e.currentTarget.style.boxShadow =
-                    '0 8px 12px rgba(0,0,0,0.15)'
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0) scale(1)'
-                  e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)'
-                }}
+                className="h-40 rounded-2xl flex flex-col items-center justify-center font-bold text-lg text-gray-800 shadow-md transition-all duration-300 ease-out cursor-pointer hover:-translate-y-2 hover:shadow-xl relative overflow-hidden"
+                style={{ backgroundColor: cat.color }}
               >
-                {cat.name}
+                {cat.image && (
+                  <div
+                    className="absolute inset-0 opacity-0 bg-cover bg-center transition-opacity duration-300 group-hover:opacity-20"
+                    style={{ backgroundImage: `url(${cat.image})` }}
+                  />
+                )}
+
+                <span className="text-5xl mb-2 relative z-10 transition-transform duration-300 group-hover:scale-110 group-hover:-translate-y-1">
+                  {cat.icon}
+                </span>
+
+                <span className="relative z-10">{cat.name}</span>
               </div>
             </Link>
           ))}
@@ -105,161 +81,64 @@ const Home = () => {
       </div>
 
       <div>
-        <h2
-          style={{
-            fontSize: '2rem',
-            fontWeight: 'bold',
-            marginBottom: '1.5rem',
-            color: '#333',
-            textAlign: 'center',
-          }}
-        >
+        <h2 className="text-3xl font-bold mb-6 text-gray-800 text-center">
           Latest Recipes
         </h2>
 
         {loadingRecipes ? (
-          <div style={{ textAlign: 'center', padding: '2rem' }}>
-            Loading recipes...
-          </div>
+          <div className="text-center py-8">Loading recipes...</div>
         ) : recipes.length === 0 ? (
-          <div
-            style={{
-              textAlign: 'center',
-              padding: '3rem',
-              backgroundColor: '#f9f9f9',
-              borderRadius: '12px',
-              color: '#666',
-            }}
-          >
-            <p style={{ fontSize: '1.2rem', marginBottom: '1rem' }}>
-              No recipes yet!
-            </p>
+          <div className="text-center py-12 bg-gray-50 rounded-xl text-gray-600">
+            <p className="text-xl mb-4">No recipes yet!</p>
             <p>Be the first to add a delicious recipe.</p>
           </div>
         ) : (
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-              gap: '2rem',
-            }}
-          >
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-8">
             {recipes.map((recipe) => (
               <Link
                 key={recipe.id}
                 to={`/recipe/${recipe.id}`}
-                style={{ textDecoration: 'none', color: 'inherit' }}
+                className="no-underline text-inherit"
               >
-                <div
-                  style={{
-                    backgroundColor: '#fff',
-                    borderRadius: '16px',
-                    overflow: 'hidden',
-                    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                    transition: 'all 0.3s ease',
-                    cursor: 'pointer',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-5px)'
-                    e.currentTarget.style.boxShadow =
-                      '0 12px 20px rgba(0,0,0,0.15)'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)'
-                    e.currentTarget.style.boxShadow =
-                      '0 4px 6px rgba(0,0,0,0.1)'
-                  }}
-                >
+                <div className="bg-white rounded-2xl overflow-hidden shadow-md transition-all duration-300 ease-out cursor-pointer hover:-translate-y-1 hover:shadow-xl">
                   <div
+                    className="h-44 bg-gray-100 bg-cover bg-center flex items-center justify-center"
                     style={{
-                      height: '180px',
                       backgroundColor: recipe.categoryColor || '#f0f0f0',
                       backgroundImage: recipe.imageUrl
                         ? `url(${recipe.imageUrl})`
                         : 'none',
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
                     }}
                   >
                     {!recipe.imageUrl && (
-                      <span style={{ color: '#999', fontSize: '3rem' }}>
-                        🍽️
-                      </span>
+                      <span className="text-gray-400 text-5xl">🍽️</span>
                     )}
                   </div>
 
-                  {/* Recipe Info */}
-                  <div style={{ padding: '1.5rem' }}>
+                  <div className="p-6">
                     <div
+                      className="inline-block px-3 py-1 rounded-full text-xs font-semibold text-gray-800 mb-3"
                       style={{
-                        display: 'inline-block',
-                        padding: '0.25rem 0.75rem',
                         backgroundColor: recipe.categoryColor || '#f0f0f0',
-                        borderRadius: '20px',
-                        fontSize: '0.8rem',
-                        fontWeight: '600',
-                        color: '#333',
-                        marginBottom: '0.75rem',
                       }}
                     >
                       {recipe.categoryName}
                     </div>
 
-                    <h3
-                      style={{
-                        fontSize: '1.25rem',
-                        fontWeight: 'bold',
-                        marginBottom: '0.5rem',
-                        color: '#333',
-                        lineHeight: 1.3,
-                      }}
-                    >
+                    <h3 className="text-xl font-bold mb-2 text-gray-800 leading-tight">
                       {recipe.title}
                     </h3>
 
-                    <p
-                      style={{
-                        color: '#666',
-                        fontSize: '0.95rem',
-                        lineHeight: 1.5,
-                        marginBottom: '1rem',
-                        display: '-webkit-box',
-                        WebkitLineClamp: 2,
-                        WebkitBoxOrient: 'vertical',
-                        overflow: 'hidden',
-                      }}
-                    >
+                    <p className="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-2">
                       {recipe.description}
                     </p>
 
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '1rem',
-                        fontSize: '0.85rem',
-                        color: '#888',
-                      }}
-                    >
+                    <div className="flex items-center gap-4 text-sm text-gray-500">
                       <span>⏱️ {recipe.prepTime + recipe.cookTime} min</span>
                       <span>🍽️ {recipe.servings} servings</span>
                     </div>
 
-                    <div
-                      style={{
-                        marginTop: '1rem',
-                        paddingTop: '1rem',
-                        borderTop: '1px solid #eee',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.5rem',
-                        fontSize: '0.85rem',
-                        color: '#666',
-                      }}
-                    >
+                    <div className="mt-4 pt-4 border-t border-gray-200 flex items-center gap-2 text-sm text-gray-600">
                       <span>By {recipe.authorName || 'Unknown'}</span>
                     </div>
                   </div>
