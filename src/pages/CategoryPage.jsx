@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { collection, query, where, getDocs, orderBy } from 'firebase/firestore'
+import { collection, query, where, getDocs } from 'firebase/firestore'
 import { db } from '../lib/firebase'
+import RecipeCard from '../components/RecipeCard'
 
 const CategoryPage = () => {
   const { id: categoryId } = useParams()
@@ -66,12 +67,6 @@ const CategoryPage = () => {
     }
   }, [categoryId])
 
-  const difficultyColors = {
-    easy: '#51cf66',
-    medium: '#ffd43b',
-    hard: '#ff6b6b',
-  }
-
   if (loading) {
     return (
       <div style={{ textAlign: 'center', padding: '4rem' }}>
@@ -118,97 +113,9 @@ const CategoryPage = () => {
         {recipes.length} recipe{recipes.length !== 1 ? 's' : ''} found
       </p>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-          gap: '1.5rem',
-        }}
-      >
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-8">
         {recipes.map((recipe) => (
-          <Link
-            to={`/recipe/${recipe.id}`}
-            key={recipe.id}
-            style={{ textDecoration: 'none', color: 'inherit' }}
-          >
-            <div
-              style={{
-                backgroundColor: '#fff',
-                borderRadius: '12px',
-                overflow: 'hidden',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                transition: 'all 0.2s ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.15)'
-                e.currentTarget.style.transform = 'translateY(-4px)'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)'
-                e.currentTarget.style.transform = 'translateY(0)'
-              }}
-            >
-              {recipe.imageUrl && (
-                <img
-                  src={recipe.imageUrl}
-                  alt={recipe.title}
-                  style={{ width: '100%', height: '200px', objectFit: 'cover' }}
-                />
-              )}
-
-              <div style={{ padding: '1.25rem' }}>
-                <h2
-                  style={{
-                    fontSize: '1.25rem',
-                    fontWeight: 'bold',
-                    marginBottom: '0.5rem',
-                    color: '#212529',
-                  }}
-                >
-                  {recipe.title}
-                </h2>
-                <p style={{ fontSize: '0.875rem', color: '#868e96' }}>
-                  By {recipe.authorName}
-                </p>
-
-                <div
-                  style={{
-                    display: 'flex',
-                    gap: '1rem',
-                    marginTop: '0.75rem',
-                    fontSize: '0.875rem',
-                    color: '#495057',
-                  }}
-                >
-                  <span>⏱️ {recipe.prepTime}m</span>
-                  <span>🔥 {recipe.cookTime}m</span>
-                  <span>🍽️ {recipe.servings}</span>
-                </div>
-
-                <span
-                  style={{
-                    display: 'inline-block',
-                    marginTop: '0.75rem',
-                    padding: '0.25rem 0.75rem',
-                    borderRadius: '20px',
-                    fontSize: '0.875rem',
-                    fontWeight: '600',
-                    textTransform: 'capitalize',
-                    backgroundColor:
-                      difficultyColors[recipe.difficulty] || '#868e96',
-                    color:
-                      recipe.difficulty === 'easy'
-                        ? '#2b8a3e'
-                        : recipe.difficulty === 'medium'
-                          ? '#e67700'
-                          : '#c92a2a',
-                  }}
-                >
-                  {recipe.difficulty}
-                </span>
-              </div>
-            </div>
-          </Link>
+          <RecipeCard key={recipe.id} recipe={recipe} />
         ))}
       </div>
     </div>
