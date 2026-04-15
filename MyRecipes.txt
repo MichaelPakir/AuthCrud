@@ -3,15 +3,16 @@ import { useNavigate, Link, useParams } from 'react-router-dom'
 import { collection, query, where, getDocs, orderBy } from 'firebase/firestore'
 import { db } from '../lib/firebase'
 import { useAuth } from '../contexts/AuthContext'
-import RecipeCard from '../components/RecipeCard'
 
 const MyRecipes = () => {
   const { user } = useAuth()
+  const navigate = useNavigate()
 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [recipes, setRecipes] = useState([])
   const [authChecked, setAuthChecked] = useState(false)
+  const { id } = useParams()
 
   useEffect(() => {
     let isMounted = true
@@ -125,7 +126,46 @@ const MyRecipes = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {recipes.map((recipe) => (
-          <RecipeCard key={recipe.id} recipe={recipe} />
+          <div
+            key={recipe.id}
+            className="bg-white rounded-lg shadow-md overflow-hidden"
+          >
+            {recipe.imageUrl && (
+              <img
+                src={recipe.imageUrl}
+                alt={recipe.title}
+                className="w-full h-48 object-cover"
+              />
+            )}
+
+            <div className="p-4">
+              <h2 className="text-xl font-semibold mb-2">{recipe.title}</h2>
+
+              <span className="inline-block bg-indigo-100 text-indigo-800 text-sm px-2 py-1 rounded mb-2">
+                {recipe.categoryName || 'Uncategorized'}
+              </span>
+
+              <div className="text-sm text-gray-600 mb-4">
+                Prep: {recipe.prepTime}m | Cook: {recipe.cookTime}m
+              </div>
+
+              <div className="flex gap-2">
+                <button
+                  onClick={() => navigate(`/recipe/${recipe.id}`)}
+                  className="flex-1 bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700"
+                >
+                  View
+                </button>
+                <Link></Link>
+                <button
+                  onClick={() => navigate(`/edit/${recipe.id}`)}
+                  className="flex-1 bg-gray-200 text-gray-800 py-2 rounded hover:bg-gray-300"
+                >
+                  Edit
+                </button>
+              </div>
+            </div>
+          </div>
         ))}
       </div>
     </section>
