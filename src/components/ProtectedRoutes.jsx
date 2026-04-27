@@ -3,9 +3,13 @@ import { Navigate, Outlet } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 
 const ProtectedRoutes = () => {
-  const { user } = useAuth()
+  const { user, loading } = useAuth()
 
-  return user ? <Outlet /> : <Navigate to="/login" replace />
+  if (loading) return <p>Loading...</p>
+
+  if (!user) return <Navigate to={'/'} replace />
+
+  return <Outlet />
 }
 
 export default ProtectedRoutes
