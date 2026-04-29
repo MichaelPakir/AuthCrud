@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore'
 import { db } from '../lib/firebase'
 import { fetchCategories } from '../services/categoryService'
+import FavoriteToggle from '../components/FavoriteToggle'
 
 const Home = () => {
   const [categories, setCategories] = useState(null)
@@ -82,7 +83,7 @@ const Home = () => {
 
       <div>
         <h2 className="text-3xl font-bold mb-6 text-gray-800 text-center">
-          Latest Recipes
+          Latest Recipes <FavoriteToggle />
         </h2>
 
         {loadingRecipes ? (
