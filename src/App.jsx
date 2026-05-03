@@ -15,12 +15,11 @@ const App = () => {
   return (
     <Routes>
       <Route element={<MainLayout />}>
-        // public pages
         <Route path="/" element={<Home />} />
         <Route path="login" element={<Login />} />
         <Route path="/category/:id" element={<CategoryPage />} />
         <Route path="/recipe/:id" element={<RecipeDetail />} />
-        // protected pages
+
         <Route element={<ProtectedRoutes />}>
           <Route path="/add-recipe" element={<AddRecipe />} />
           <Route path="/edit/:id" element={<EditRecipe />} />

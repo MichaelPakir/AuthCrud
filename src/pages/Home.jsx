@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore'
 import { db } from '../lib/firebase'
 import { fetchCategories } from '../services/categoryService'
+import FavoriteToggle from '../components/FavoriteToggle'
 
 const Home = () => {
   const [categories, setCategories] = useState(null)
@@ -101,18 +102,24 @@ const Home = () => {
                 className="no-underline text-inherit"
               >
                 <div className="bg-white rounded-2xl overflow-hidden shadow-md transition-all duration-300 ease-out cursor-pointer hover:-translate-y-1 hover:shadow-xl">
-                  <div
-                    className="h-44 bg-gray-100 bg-cover bg-center flex items-center justify-center"
-                    style={{
-                      backgroundColor: recipe.categoryColor || '#f0f0f0',
-                      backgroundImage: recipe.imageUrl
-                        ? `url(${recipe.imageUrl})`
-                        : 'none',
-                    }}
-                  >
-                    {!recipe.imageUrl && (
-                      <span className="text-gray-400 text-5xl">🍽️</span>
-                    )}
+                  <div className="relative h-44 bg-gray-100 flex items-center justify-center">
+                    <div className="absolute top-3 right-3 z-10">
+                      <FavoriteToggle recipe={recipe} />
+                    </div>
+
+                    <div
+                      className="w-full h-full bg-cover bg-center flex items-center justify-center"
+                      style={{
+                        backgroundColor: recipe.categoryColor || '#f0f0f0',
+                        backgroundImage: recipe.imageUrl
+                          ? `url(${recipe.imageUrl})`
+                          : 'none',
+                      }}
+                    >
+                      {!recipe.imageUrl && (
+                        <span className="text-gray-400 text-5xl">🍽️</span>
+                      )}
+                    </div>
                   </div>
 
                   <div className="p-6">

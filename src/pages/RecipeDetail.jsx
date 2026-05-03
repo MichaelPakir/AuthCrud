@@ -3,6 +3,7 @@ import { doc, getDoc } from 'firebase/firestore'
 import { db } from '../lib/firebase'
 import { useParams, Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import FavoriteToggle from '../components/FavoriteToggle'
 
 const RecipeDetail = () => {
   const [recipe, setRecipe] = useState(null)
