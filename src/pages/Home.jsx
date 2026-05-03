@@ -83,7 +83,7 @@ const Home = () => {
 
       <div>
         <h2 className="text-3xl font-bold mb-6 text-gray-800 text-center">
-          Latest Recipes <FavoriteToggle />
+          Latest Recipes
         </h2>
 
         {loadingRecipes ? (
@@ -102,18 +102,24 @@ const Home = () => {
                 className="no-underline text-inherit"
               >
                 <div className="bg-white rounded-2xl overflow-hidden shadow-md transition-all duration-300 ease-out cursor-pointer hover:-translate-y-1 hover:shadow-xl">
-                  <div
-                    className="h-44 bg-gray-100 bg-cover bg-center flex items-center justify-center"
-                    style={{
-                      backgroundColor: recipe.categoryColor || '#f0f0f0',
-                      backgroundImage: recipe.imageUrl
-                        ? `url(${recipe.imageUrl})`
-                        : 'none',
-                    }}
-                  >
-                    {!recipe.imageUrl && (
-                      <span className="text-gray-400 text-5xl">🍽️</span>
-                    )}
+                  <div className="relative h-44 bg-gray-100 flex items-center justify-center">
+                    <div className="absolute top-3 right-3 z-10">
+                      <FavoriteToggle recipe={recipe} />
+                    </div>
+
+                    <div
+                      className="w-full h-full bg-cover bg-center flex items-center justify-center"
+                      style={{
+                        backgroundColor: recipe.categoryColor || '#f0f0f0',
+                        backgroundImage: recipe.imageUrl
+                          ? `url(${recipe.imageUrl})`
+                          : 'none',
+                      }}
+                    >
+                      {!recipe.imageUrl && (
+                        <span className="text-gray-400 text-5xl">🍽️</span>
+                      )}
+                    </div>
                   </div>
 
                   <div className="p-6">
