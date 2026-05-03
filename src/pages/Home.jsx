@@ -96,32 +96,36 @@ const Home = () => {
         ) : (
           <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-8">
             {recipes.map((recipe) => (
-              <Link
+              <div
                 key={recipe.id}
-                to={`/recipe/${recipe.id}`}
-                className="no-underline text-inherit"
+                className="relative bg-white rounded-2xl overflow-visible shadow-md transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl"
               >
-                <div className="bg-white rounded-2xl overflow-hidden shadow-md transition-all duration-300 ease-out cursor-pointer hover:-translate-y-1 hover:shadow-xl">
-                  <div className="relative h-44 bg-gray-100 flex items-center justify-center">
-                    <div className="absolute top-3 right-3 z-10">
-                      <FavoriteToggle recipe={recipe} />
-                    </div>
+                {/* ❤️ FAVORITE TOGGLE (CLICK SAFE LAYER) */}
+                <div className="absolute top-3 right-3 z-50 pointer-events-auto">
+                  <FavoriteToggle recipe={recipe} />
+                </div>
 
-                    <div
-                      className="w-full h-full bg-cover bg-center flex items-center justify-center"
-                      style={{
-                        backgroundColor: recipe.categoryColor || '#f0f0f0',
-                        backgroundImage: recipe.imageUrl
-                          ? `url(${recipe.imageUrl})`
-                          : 'none',
-                      }}
-                    >
-                      {!recipe.imageUrl && (
-                        <span className="text-gray-400 text-5xl">🍽️</span>
-                      )}
-                    </div>
+                {/* CLICKABLE CARD */}
+                <Link
+                  to={`/recipe/${recipe.id}`}
+                  className="block no-underline text-inherit"
+                >
+                  {/* IMAGE */}
+                  <div
+                    className="h-44 bg-gray-100 bg-cover bg-center flex items-center justify-center"
+                    style={{
+                      backgroundColor: recipe.categoryColor || '#f0f0f0',
+                      backgroundImage: recipe.imageUrl
+                        ? `url(${recipe.imageUrl})`
+                        : 'none',
+                    }}
+                  >
+                    {!recipe.imageUrl && (
+                      <span className="text-gray-400 text-5xl">🍽️</span>
+                    )}
                   </div>
 
+                  {/* CONTENT */}
                   <div className="p-6">
                     <div
                       className="inline-block px-3 py-1 rounded-full text-xs font-semibold text-gray-800 mb-3"
@@ -149,8 +153,8 @@ const Home = () => {
                       <span>By {recipe.authorName || 'Unknown'}</span>
                     </div>
                   </div>
-                </div>
-              </Link>
+                </Link>
+              </div>
             ))}
           </div>
         )}

@@ -1,20 +1,64 @@
-import { createContext, useState } from 'react'
+import { createContext, useEffect, useState } from 'react'
+import { doc, setDoc, deleteDoc, collection, getDocs } from 'firebase/firestore'
+import { auth, db } from '../lib/firebase'
 
 export const ToggleContext = createContext()
 
 const ToggleFavContext = ({ children }) => {
+  const [user, setUser] = useState(null)
   const [favorites, setFavorites] = useState([])
 
-  const toggleFavorite = (recipe) => {
-    setFavorites((prevFavorites) => {
-      const exists = prevFavorites.some((item) => item.id === recipe.id)
-
-      if (exists) {
-        return prevFavorites.filter((item) => item.id !== recipe.id)
-      } else {
-        return [...prevFavorites, recipe]
-      }
+  // AUTH listener
+  useEffect(() => {
+    const unsub = auth.onAuthStateChanged((u) => {
+      setUser(u || null)
     })
+
+    return () => unsub()
+  }, [])
+
+  // LOAD favorites when user changes
+  useEffect(() => {
+    if (!user) {
+      setFavorites([])
+      return
+    }
+
+    const load = async () => {
+      const snap = await getDocs(collection(db, 'users', user.uid, 'favorites'))
+
+      setFavorites(snap.docs.map((d) => d.id))
+    }
+
+    load()
+  }, [user])
+
+  // TOGGLE favorite
+  const toggleFavorite = async (recipe) => {
+    if (!user) {
+      console.warn('No user logged in')
+      return
+    }
+
+    const favRef = doc(db, 'users', user.uid, 'favorites', recipe.id)
+
+    const isFav = favorites.includes(recipe.id)
+
+    try {
+      if (isFav) {
+        await deleteDoc(favRef)
+        setFavorites((prev) => prev.filter((id) => id !== recipe.id))
+      } else {
+        await setDoc(favRef, {
+          recipeId: recipe.id,
+          createdAt: new Date(),
+        })
+
+        setFavorites((prev) => [...prev, recipe.id])
+      }
+    } catch (err) {
+      console.error('Favorite toggle failed:', err)
+    }
   }
 
   return (

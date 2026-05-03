@@ -12,8 +12,9 @@ const FavoriteToggle = ({ recipe }) => {
   }
 
   const { favorites, toggleFavorite } = context
-  // const { favorites, toggleFavorite } = useContext(ToggleContext)
-  const isFavorite = favorites.some((item) => item.id === recipe.id)
+
+  // ✅ FIX: favorites is an array of IDs
+  const isFavorite = favorites.includes(recipe.id)
 
   const handleToggleButton = (e) => {
     e.preventDefault()
@@ -23,13 +24,15 @@ const FavoriteToggle = ({ recipe }) => {
 
   return (
     <button
-      className="relative z-30"
       type="button"
       aria-label="Toggle favorite"
       onClick={handleToggleButton}
+      className="relative z-30"
     >
       <HeartIcon
-        className={`h-6 w-6 ${isFavorite ? 'text-red-500' : 'text-gray-500'}`}
+        className={`h-6 w-6 transition-colors duration-200 ${
+          isFavorite ? 'text-red-500' : 'text-gray-500'
+        }`}
       />
     </button>
   )
