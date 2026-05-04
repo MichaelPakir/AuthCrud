@@ -100,17 +100,14 @@ const Home = () => {
                 key={recipe.id}
                 className="relative bg-white rounded-2xl overflow-visible shadow-md transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl"
               >
-                {/* ❤️ FAVORITE TOGGLE (CLICK SAFE LAYER) */}
                 <div className="absolute top-3 right-3 z-50 pointer-events-auto">
                   <FavoriteToggle recipe={recipe} />
                 </div>
 
-                {/* CLICKABLE CARD */}
                 <Link
                   to={`/recipe/${recipe.id}`}
                   className="block no-underline text-inherit"
                 >
-                  {/* IMAGE */}
                   <div
                     className="h-44 bg-gray-100 bg-cover bg-center flex items-center justify-center"
                     style={{
@@ -125,7 +122,6 @@ const Home = () => {
                     )}
                   </div>
 
-                  {/* CONTENT */}
                   <div className="p-6">
                     <div
                       className="inline-block px-3 py-1 rounded-full text-xs font-semibold text-gray-800 mb-3"
