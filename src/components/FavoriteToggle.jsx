@@ -13,7 +13,6 @@ const FavoriteToggle = ({ recipe }) => {
 
   const { favorites, toggleFavorite } = context
 
-  // ✅ FIX: favorites is an array of IDs
   const isFavorite = favorites.includes(recipe.id)
 
   const handleToggleButton = (e) => {

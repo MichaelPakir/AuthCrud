@@ -1,7 +1,7 @@
 export const uploadImage = async (file) => {
   const formData = new FormData()
   formData.append('file', file)
-  formData.append('upload_preset', 'authcrud') // ← Updated
+  formData.append('upload_preset', 'authcrud')
   formData.append('cloud_name', 'dviejulad')
 
   try {

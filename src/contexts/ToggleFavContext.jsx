@@ -8,7 +8,6 @@ const ToggleFavContext = ({ children }) => {
   const [user, setUser] = useState(null)
   const [favorites, setFavorites] = useState([])
 
-  // AUTH listener
   useEffect(() => {
     const unsub = auth.onAuthStateChanged((u) => {
       setUser(u || null)
@@ -17,7 +16,6 @@ const ToggleFavContext = ({ children }) => {
     return () => unsub()
   }, [])
 
-  // LOAD favorites when user changes
   useEffect(() => {
     if (!user) {
       setFavorites([])
@@ -33,7 +31,6 @@ const ToggleFavContext = ({ children }) => {
     load()
   }, [user])
 
-  // TOGGLE favorite
   const toggleFavorite = async (recipe) => {
     if (!user) {
       console.warn('No user logged in')

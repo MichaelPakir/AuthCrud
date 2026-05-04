@@ -1,4 +1,3 @@
-// src/components/ImageUploadTest.jsx
 import { useState } from 'react'
 import { uploadImage } from '../services/imageService'
 
