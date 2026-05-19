@@ -1,12 +1,15 @@
 export const uploadImage = async (file) => {
   const formData = new FormData()
   formData.append('file', file)
-  formData.append('upload_preset', 'authcrud')
-  formData.append('cloud_name', 'dviejulad')
+  formData.append(
+    'upload_preset',
+    import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
+  )
+  formData.append('cloud_name', import.meta.env.VITE_CLOUDINARY_CLOUD_NAME)
 
   try {
     const response = await fetch(
-      `https://api.cloudinary.com/v1_1/dviejulad/image/upload`,
+      `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`,
       {
         method: 'POST',
         body: formData,
