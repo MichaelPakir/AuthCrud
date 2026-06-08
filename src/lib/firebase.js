@@ -12,12 +12,19 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 }
 
+console.log('Firebase config:', firebaseConfig)
+console.log('before init')
+
 const app = initializeApp(firebaseConfig)
+
+console.log('after app init')
 
 export const db = initializeFirestore(app, {
   experimentalForceLongPolling: true,
 })
 
 export const auth = getAuth(app)
+
+console.log('after auth init')
 
 export default app
